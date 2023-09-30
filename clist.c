@@ -312,7 +312,12 @@ void CL_reverse(CList list) {
 void CL_foreach(CList list, CL_foreach_callback callback, void *cb_data) {
         assert(list);
 
-        //
-        // TODO: Add your code here
-        //
+        int pos = 0;
+        struct _cl_node *iter = list->head;
+
+        while (iter != NULL) {
+                callback(pos, iter->element, cb_data);
+                iter = iter->next;
+                pos++;
+        }
 }

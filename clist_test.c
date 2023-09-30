@@ -244,6 +244,42 @@ int test_cl_remove() {
 }
 
 /*
+ * Tests the cl_copy function
+ *
+ * Returns: 1 if all tests pass, 0 otherwise
+ */
+
+int test_cl_copy() {
+        CList list = CL_new();
+
+        // copy an empty list
+        CList copy = CL_copy(list);
+
+        test_assert(CL_length(list) == 0);
+        test_assert(CL_length(copy) == 0);
+
+        // test the case for the empty list
+        for (int i = 0; i < num_testdata; i++) {
+                CL_append(list, testdata[i]);
+                test_assert(CL_length(list) == i + 1);
+        }
+
+        CL_free(copy);
+
+        copy = CL_copy(list);
+        // Assert that the length is correct
+        test_assert(CL_length(list) == num_testdata);
+        test_assert(CL_length(copy) == num_testdata);
+
+        // Assert that the elements are copied correctly
+        for (int i = 0; i < num_testdata; i++) test_compare(CL_nth(copy, i), CL_nth(list, i));
+
+        CL_free(list);
+        CL_free(copy);
+        return 1;
+}
+
+/*
  * A demonstration of how to use a CList, which also doubles as a
  * test case.
  *
@@ -333,10 +369,8 @@ int main() {
         passed += test_cl_insert();
         num_tests++;
         passed += test_cl_remove();
-
-        // //
-        // // TODO: Add your code here
-        // //
+        num_tests++;
+        passed += test_cl_copy();
 
         num_tests++;
         passed += sample_clist_usage();
