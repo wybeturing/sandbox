@@ -280,6 +280,56 @@ int test_cl_copy() {
 }
 
 /*
+ * Tests the cl_inserted_sorted function
+ *
+ * Returns: 1 if all tests pass, 0 otherwise
+ */
+
+int test_cl_inserted_sorted() {
+    CList list = CL_new();
+
+    for (int i = 0; i < num_testdata; i += 2) CL_append(list, testdata_sorted[i]);
+
+    for (int i = 1; i < num_testdata; i += 2) CL_insert_sorted(list, testdata_sorted[i]);
+
+    test_assert(CL_length(list) == num_testdata);
+
+    for (int i = 0; i < num_testdata; i++) test_compare(CL_nth(list, i), testdata_sorted[i]);
+
+    // Attempting the case when the list is empty
+    CL_free(list);
+
+    return 1;
+}
+
+/*
+ * Tests the cl_join
+ *
+ * Returns: 1 if all tests pass, 0 otherwise
+ */
+
+int test_cl_join() {
+    CList list = CL_new();
+    CList list_join = CL_new();
+
+    // Joining two empty lists should leave us with an empty list
+
+    for (int i = 0; i < num_testdata; i += 2) CL_append(list, testdata_sorted[i]);
+
+    for (int i = 1; i < num_testdata; i += 2) CL_insert_sorted(list, testdata_sorted[i]);
+
+    test_assert(CL_length(list) == num_testdata);
+
+    for (int i = 0; i < num_testdata; i++) test_compare(CL_nth(list, i), testdata_sorted[i]);
+
+    // Attempting the case when the list is empty
+    CL_free(list);
+
+    CL_free(list_join);
+    return 1;
+}
+
+/*
  * A demonstration of how to use a CList, which also doubles as a
  * test case.
  *
