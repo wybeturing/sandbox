@@ -265,16 +265,29 @@ int CL_insert_sorted(CList list, CListElementType element) {
                 CL_append(list, element);
                 return 0;
         } else { /* If the list is not empty */
-                int index = 0;
-                struct _cl_node *iter = list->head;
 
-                while (iter->next != NULL && (strcmp(iter->element, element) < 0)) {
+        struct _cl_node *iter = list->head;
+        struct _cl_node *prev = NULL;
+                int index = 0;
+
+        while (iter != NULL && (strcmp(iter->element, element) < 0)) {
+            prev = iter;
                         iter = iter->next;
-                        iter++;
+            index++;
                 }
 
-                CL_insert(list, element, index);
-                return index;
+        struct _cl_node *new_node = _CL_new_node(element, iter);
+
+        if (prev == NULL) {
+            // Inserting at the beginning of the list
+            list->head = new_node;
+        } else {
+            // Inserting in the middle or at the end of the list
+            prev->next = new_node;
+        }
+
+        list->length++;
+        return index;
         }
 }
 
