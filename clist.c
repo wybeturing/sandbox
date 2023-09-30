@@ -154,6 +154,7 @@ CListElementType CL_nth(CList list, int pos) {
                 const int standard_pos = (pos < 0) ? pos + len : pos;
                 int current_position = 0;
                 while (current_position < standard_pos) {
+            if (iter == NULL) return INVALID_RETURN;
                         iter = iter->next;
                         current_position++;
                 }
