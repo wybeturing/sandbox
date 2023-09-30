@@ -166,7 +166,7 @@ CListElementType CL_nth(CList list, int pos) {
 bool CL_insert(CList list, CListElementType element, int pos) {
         assert(list);
         // Handle the case where the list is empty
-        if (list->head == NULL && pos != 0) {
+        if (list->head == NULL && pos != 0 && pos != -1) {
                 return false;
         }
 
@@ -259,23 +259,22 @@ CList CL_copy(CList list) {
 int CL_insert_sorted(CList list, CListElementType element) {
         assert(list);
 
-        // Handle the case where the list is empty
-        int index = 0;
-
+        /* Handle the case where the list is empty */
         if (list->length == 0) {
                 CL_append(list, element);
-        } else {
+                return 0;
+        } else { /* If the list is not empty */
+                int index = 0;
                 struct _cl_node *iter = list->head;
 
-                while (iter->next && (strcmp(iter->element, element) < 0)) {
+                while (iter->next != NULL && (strcmp(iter->element, element) < 0)) {
                         iter = iter->next;
                         iter++;
                 }
 
                 CL_insert(list, element, index);
+                return index;
         }
-
-        return index;
 }
 
 // Documented in .h file

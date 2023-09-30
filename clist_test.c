@@ -169,7 +169,7 @@ int test_cl_insert() {
         test_assert(!CL_insert(list, testdata[0], -2));
         test_assert(!CL_insert(list, testdata[1], 5));
         test_assert(CL_length(list) == 0);
-        test_assert(CL_insert(list, testdata[0], 0));
+        test_assert(CL_insert(list, testdata[0], -1));
         test_assert(CL_length(list) == 1);
 
         // Non-empty list, inserting at the top
