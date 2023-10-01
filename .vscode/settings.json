@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/wybeturing/Documents/howdy/sandbox",
+            "binaryPath": "/home/wybeturing/Documents/howdy/sandbox/clist_test",
+            "binaryArgs": []
+        }
+    ]
+}

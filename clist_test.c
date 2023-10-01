@@ -57,6 +57,11 @@ static const int num_testdata = sizeof(testdata) / sizeof(testdata[0]);
         }                                                                                          \
     }
 
+// Function to print elements during iteration
+void print_callback(int pos, CListElementType element, void *cb_data) {
+    printf("Position: %d, Element: %s\n", pos, element);
+}
+
 /*
  * Tests the CL_new, CL_push, CL_pop, and CL_free functions
  *
@@ -151,9 +156,26 @@ int test_cl_nth() {
     return 1;
 }
 
-//
-// TODO: Add your code here
-//
+/*
+ * Tests the CL_free function
+ *
+ * Returns: 1 if all tests pass, 0 otherwise
+ */
+
+int test_cl_free() {
+    CList list = CL_new();
+
+    for (int i = 0; i < 5; ++i) {
+        CL_append(list, testdata[i]);
+    }
+
+    printf("Before freeing:\n");
+    CL_foreach(list, print_callback, NULL);
+
+    CL_free(list);
+
+    return 1;
+}
 
 /*
  * Tests the CL_insert function
@@ -313,19 +335,95 @@ int test_cl_join() {
     CList list_join = CL_new();
 
     // Joining two empty lists should leave us with an empty list
+    CL_join(list, list_join);
+    test_assert(CL_length(list) == 0);
+    test_assert(CL_length(list_join) == 0);
 
-    for (int i = 0; i < num_testdata; i += 2) CL_append(list, testdata_sorted[i]);
+    // Populating both lists and then testing the join
 
-    for (int i = 1; i < num_testdata; i += 2) CL_insert_sorted(list, testdata_sorted[i]);
+    for (int i = 0; i < 7; ++i) CL_append(list, testdata[i]);
 
-    test_assert(CL_length(list) == num_testdata);
+    for (int i = 7; i < 14; ++i) CL_append(list_join, testdata[i]);
+    test_assert(CL_length(list) == 7);
+    test_assert(CL_length(list_join) == 7);
+    CL_join(list, list_join);
+    test_assert(CL_length(list) == 14);
+    test_assert(CL_length(list_join) == 0);
 
-    for (int i = 0; i < num_testdata; i++) test_compare(CL_nth(list, i), testdata_sorted[i]);
+    // Testing that the values are the same
+    for (int i = 0; i < 14; ++i) test_compare(CL_nth(list, i), testdata[i]);
 
-    // Attempting the case when the list is empty
+    // Trying to join an empty list to a list should not change anything
+    CL_join(list, list_join);
+    test_assert(CL_length(list) == 14);
+    test_assert(CL_length(list_join) == 0);
+
+    // Testing that the values are the same
+    for (int i = 0; i < 14; ++i) test_compare(CL_nth(list, i), testdata[i]);
+
     CL_free(list);
 
     CL_free(list_join);
+    return 1;
+}
+
+/*
+ * Tests the cl_reverse
+ *
+ * Returns: 1 if all tests pass, 0 otherwise
+ */
+
+int test_cl_reverse() {
+    CList list = CL_new();
+
+    // Reversing an empty list should leave the list empty
+    CL_reverse(list);
+    test_assert(CL_length(list) == 0);
+
+    // Reversing a list with one item should leave the list unchanged
+
+    CL_append(list, testdata[0]);
+    CL_reverse(list);
+    test_assert(CL_length(list) == 1);
+    test_compare(CL_nth(list, 0), testdata[0]);
+
+    // Reversing a list with items should in fact reverse the list and maintain the length
+
+    for (int i = 1; i < 8; ++i) CL_append(list, testdata[i]);
+    CL_reverse(list);
+    for (int i = 0; i < 8; ++i) test_compare(CL_nth(list, i), testdata[7 - i]);
+    test_assert(CL_length(list) == 8);
+
+    // Reversing a reversed list should ensure the original state
+    CL_reverse(list);
+    for (int i = 0; i < 8; ++i) test_compare(CL_nth(list, i), testdata[i]);
+
+    CL_free(list);
+    return 1;
+}
+
+/*
+ * Tests the cl_foreach
+ *
+ * Returns: 1 if all tests pass, 0 otherwise
+ */
+
+int test_cl_foreach() {
+    CList list = CL_new();
+
+    // CL_foreach on an empty list should do nothing
+    CL_foreach(list, print_callback, NULL);
+
+    // Should print for a list with items
+    for (int i = 0; i < 5; ++i) {
+        CL_append(list, testdata[i]);
+    }
+
+    printf("Iterating through the list:\n");
+    CL_foreach(list, print_callback, NULL);
+
+    CL_free(list);
+
     return 1;
 }
 
@@ -423,6 +521,12 @@ int main() {
     passed += test_cl_copy();
     num_tests++;
     passed += test_cl_inserted_sorted();
+    num_tests++;
+    passed += test_cl_reverse();
+    num_tests++;
+    passed += test_cl_foreach();
+    num_tests++;
+    passed += test_cl_free();
 
     num_tests++;
     passed += sample_clist_usage();

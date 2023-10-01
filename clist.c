@@ -105,20 +105,15 @@ void CL_push(CList list, CListElementType element) {
 // Documented in .h file
 CListElementType CL_pop(CList list) {
     assert(list);
-    struct _cl_node *popped_node = list->head;
-
-    if (popped_node == NULL) return INVALID_RETURN;
-
-    CListElementType ret = popped_node->element;
-
-    // unlink previous head node, then free it
-    list->head = popped_node->next;
-    free(popped_node);
-    // we cannot refer to popped node any longer
-
+    struct _cl_node *node = list->head;
+    if (node == NULL) {
+        return INVALID_RETURN;
+    }
+    CListElementType element = node->element;
+    list->head = node->next;
+    free(node);
     list->length--;
-
-    return ret;
+    return element;
 }
 
 // Documented in .h file
